@@ -11,10 +11,11 @@ pipeline {
             //git remote set-url origin git@github.com:venki-tech/aws-terraform.git
             //git checkout
             sh '''
-            git clone https://github.com/venki-tech/aws-terraform.git
+            git clone https://github.com/venki-tech/aep-terraform-create-aws.git
             '''
           }
         }
+        
         stage ('Set Variables') {
             steps {
                 script {
@@ -35,7 +36,7 @@ pipeline {
                 else
                   echo "Keys already present, will copy them into workspace"
                 fi
-                cp ${HOME}/vvkey* ${WORKSPACE}/
+                cp ${HOME}/vvkey* ${WORKSPACE}/aep-terraform-create-aws/
               '''
           }
         }
@@ -43,9 +44,9 @@ pipeline {
         stage('Copy Terraform init files') {
           steps {
               sh'''
-                if [[ ! -d ${WORKSPACE}/.terraform ]]; then
+                if [[ ! -d ${WORKSPACE}/aep-terraform-create-aws/.terraform ]]; then
                   echo "Terraform init files dont exist."
-                  cp -r ${HOME}/.terraform ${WORKSPACE}/
+                  cp -r ${HOME}/.terraform ${WORKSPACE}/aep-terraform-create-aws/
                 else
                   echo "terraform init files exits, nothing to do"
                 fi
@@ -53,19 +54,19 @@ pipeline {
           }
         }
 
-/*
+
         stage('Terraform init') {
           steps {
             withCredentials([[
               $class: 'AmazonWebServicesCredentialsBinding',credentialsId: "${env:credentialsId}",accessKeyVariable: 'AWS_ACCESS_KEY_ID',secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
             ]]) {
-              ansiColor('xterm') {
-                sh 'terraform init'
-              }
+                  sh '''
+                      cd ${WORKSPACE}/aep-terraform-create-aws/
+                      terraform init
+                  '''
             }
           }
         }
-*/
 
 
     }
