@@ -4,18 +4,16 @@ pipeline {
 
     stages {
 
-        stage('checkout') {
+        stage('Checkout Repos') {
           steps {
             cleanWs()
             //checkout scm
-            //git remote set-url origin git@github.com:venki-tech/aws-terraform.git
-            //git checkout
             sh '''
-            git clone https://github.com/venki-tech/aep-terraform-create-aws.git
+              git clone https://github.com/venki-tech/aep-terraform-create-aws.git
             '''
           }
         }
-        
+
         stage ('Set Variables') {
             steps {
                 script {
@@ -54,7 +52,6 @@ pipeline {
           }
         }
 
-
         stage('Terraform init') {
           steps {
             withCredentials([[
@@ -68,6 +65,43 @@ pipeline {
           }
         }
 
+        stage('Terraform Plan') {
+          steps {
+            withCredentials([[
+              $class: 'AmazonWebServicesCredentialsBinding',credentialsId: "${env:credentialsId}",accessKeyVariable: 'AWS_ACCESS_KEY_ID',secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+            ]]) {
+                  sh '''
+                    cd ${WORKSPACE}/aep-terraform-create-aws/
+                    terraform plan
+                  '''
+                }
+          }
+        }
+
+        stage('Terraform Apply - Build Servers') {
+          steps {
+            withCredentials([[
+              $class: 'AmazonWebServicesCredentialsBinding',credentialsId: "${env:credentialsId}",accessKeyVariable: 'AWS_ACCESS_KEY_ID',secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+            ]]) {
+                  sh '''
+                    cd ${WORKSPACE}/aep-terraform-create-aws/
+                    terraform apply -auto-approve
+                  '''
+                }
+          }
+        }
+
+        stage('Git Push terraform.tfstate to Repo') {
+          steps {
+                  sh '''
+                    cd ${WORKSPACE}/aep-terraform-create-aws/
+                    git remote set-url origin git@github.com:venki-tech/aep-terraform-create-aws.git
+                    git add terraform.tfstate* inventory.txt
+                    git commit -m "Added terraform state files to repo" || true
+                    git push origin HEAD:master
+                  '''
+          }
+        }
 
     }
 
