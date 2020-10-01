@@ -8,17 +8,21 @@ pipeline {
           steps {
             cleanWs()
             //checkout scm
-            sh '''
-              git clone https://github.com/venki-tech/aep-terraform-create-aws.git
-            '''
+            ansiColor('xterm') {
+              sh '''
+                git clone https://github.com/venki-tech/aep-terraform-create-aws.git
+              '''
+            }
           }
         }
 
         stage ('Set Variables') {
             steps {
                 script {
+                  ansiColor('xterm') {
                     env.credentialsId = "awsCredentials"
                     env.githubCredentialsId = "github_clone"
+                  }
                 }
             }
         }
@@ -26,21 +30,24 @@ pipeline {
         stage('Copy Keys') {
           steps {
               //sh 'echo -e "y\n" | ssh-keygen -t rsa -N "" -f vvkey'
-              sh'''
-                if [[ ! -f ${HOME}/vvkey ]]; then
-                  echo "New keys will be generated, and then copied over"
-                  ssh-keygen -t rsa -N "" -f ${HOME}/vvkey
-
-                else
-                  echo "Keys already present, will copy them into workspace"
-                fi
-                cp ${HOME}/vvkey* ${WORKSPACE}/aep-terraform-create-aws/
-              '''
+              ansiColor('xterm') {
+                sh'''
+                  if [[ ! -f ${HOME}/vvkey ]]; then
+                    echo "New keys will be generated, and then copied over"
+                    ssh-keygen -t rsa -N "" -f ${HOME}/vvkey
+                    
+                    else
+                    echo "Keys already present, will copy them into workspace"
+                    fi
+                    cp ${HOME}/vvkey* ${WORKSPACE}/aep-terraform-create-aws/
+                    '''
+              }
           }
         }
 
         stage('Copy Terraform init files') {
           steps {
+            ansiColor('xterm') {
               sh'''
                 if [[ ! -d ${WORKSPACE}/aep-terraform-create-aws/.terraform ]]; then
                   echo "Terraform init files dont exist."
@@ -49,6 +56,7 @@ pipeline {
                   echo "terraform init files exits, nothing to do"
                 fi
               '''
+            }
           }
         }
 
@@ -57,10 +65,12 @@ pipeline {
             withCredentials([[
               $class: 'AmazonWebServicesCredentialsBinding',credentialsId: "${env:credentialsId}",accessKeyVariable: 'AWS_ACCESS_KEY_ID',secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
             ]]) {
+                ansiColor('xterm') {
                   sh '''
                       cd ${WORKSPACE}/aep-terraform-create-aws/
                       terraform init
                   '''
+                }
             }
           }
         }
@@ -70,11 +80,13 @@ pipeline {
             withCredentials([[
               $class: 'AmazonWebServicesCredentialsBinding',credentialsId: "${env:credentialsId}",accessKeyVariable: 'AWS_ACCESS_KEY_ID',secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
             ]]) {
+                ansiColor('xterm') {
                   sh '''
                     cd ${WORKSPACE}/aep-terraform-create-aws/
                     terraform plan
                   '''
                 }
+            }
           }
         }
 
@@ -83,25 +95,73 @@ pipeline {
             withCredentials([[
               $class: 'AmazonWebServicesCredentialsBinding',credentialsId: "${env:credentialsId}",accessKeyVariable: 'AWS_ACCESS_KEY_ID',secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
             ]]) {
+                ansiColor('xterm') {
                   sh '''
                     cd ${WORKSPACE}/aep-terraform-create-aws/
                     terraform apply -auto-approve
                   '''
                 }
+            }
           }
         }
 
         stage('Git Push terraform.tfstate to Repo') {
           steps {
-                  sh '''
-                    cd ${WORKSPACE}/aep-terraform-create-aws/
-                    git remote set-url origin git@github.com:venki-tech/aep-terraform-create-aws.git
-                    git add terraform.tfstate* inventory.txt
-                    git commit -m "Added terraform state files to repo" || true
-                    git push origin HEAD:master
-                  '''
+            ansiColor('xterm') {
+              sh '''
+                cd ${WORKSPACE}/aep-terraform-create-aws/
+                git remote set-url origin git@github.com:venki-tech/aep-terraform-create-aws.git
+                git add terraform.tfstate* inventory.txt
+                git commit -m "Added terraform state files to repo" || true
+                git push origin HEAD:master
+
+                git remote set-url origin git@github.com:venki-tech/aep-ansible-provision.git
+                git add terraform.tfstate* inventory.txt
+                git commit -m "Added terraform state files to repo" || true
+                git push origin HEAD:master
+
+                git remote set-url origin git@github.com:venki-tech/aws-terraform.git
+                git add terraform.tfstate* inventory.txt
+                git commit -m "Added terraform state files to repo" || true
+                git push origin HEAD:master
+              '''
+            }
           }
         }
+
+        /*
+        update tfstate files to other original repos
+        send the inventory files to the ansible repos
+        */
+/*
+        sh '''
+          git clone https://github.com/venki-tech/aep-terraform-create-aws.git
+        '''
+
+        stage('Ansible - Provision App Server') {
+          steps {
+            ansiColor('xterm') {
+              sh 'ansible-playbook aws_ansible_pb_provision_appserver.yaml -i inventory.txt'
+            }
+          }
+        }
+
+        stage('Ansible - Provision DB Server') {
+          steps {
+            ansiColor('xterm') {
+              sh 'ansible-playbook aws_ansible_pb_provision_dbserver.yaml -i inventory.txt'
+            }
+          }
+        }
+
+        stage('Ansible - Provision WEB Server') {
+          steps {
+            ansiColor('xterm') {
+              sh 'ansible-playbook aws_ansible_pb_provision_webserver.yaml -i inventory.txt'
+            }
+          }
+        }
+*/
 
     }
 
