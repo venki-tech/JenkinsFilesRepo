@@ -1,0 +1,54 @@
+pipeline {
+
+    agent { label 'slave'}
+
+    stages {
+
+        stage('checkout') {
+          steps {
+            cleanWs()
+            checkout scm
+          }
+        }
+/*
+        stage ('Set Variables') {
+            steps {
+                script {
+                    env.credentialsId = "awsCredentials"
+                    env.githubCredentialsId = "github_clone"
+                }
+            }
+        }
+
+
+        stage('Git Push terraform.tfstate to Repo') {
+          steps {
+                sh '''
+                cd "${WORKSPACE}"
+                git remote set-url origin git@github.com:venki-tech/aws-terraform.git
+                git add terraform.tfstate* inventory.txt
+                git commit -m "Added terraform state files to repo" || true
+                git push origin HEAD:master
+                '''
+          }
+        }
+|*/
+
+
+    }
+
+    post {
+        success {
+            echo "Success"
+        }
+        unstable {
+            echo "Unstable"
+        }
+        aborted {
+            echo "Aborted"
+        }
+        failure {
+            echo "FAILURE"
+        }
+    }
+}
