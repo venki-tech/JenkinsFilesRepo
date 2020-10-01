@@ -10,8 +10,9 @@ pipeline {
             //checkout scm
             //git remote set-url origin git@github.com:venki-tech/aws-terraform.git
             //git checkout
+            sh '''
             git clone https://github.com/venki-tech/aws-terraform.git
-            git checkout
+            '''
           }
         }
 /*
