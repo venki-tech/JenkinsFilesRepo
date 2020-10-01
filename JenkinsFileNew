@@ -7,7 +7,10 @@ pipeline {
         stage('checkout') {
           steps {
             cleanWs()
-            checkout scm
+            //checkout scm
+            //git remote set-url origin git@github.com:venki-tech/aws-terraform.git
+            //git checkout
+            git clone https://github.com/venki-tech/aws-terraform.git
           }
         }
 /*
@@ -19,7 +22,6 @@ pipeline {
                 }
             }
         }
-
 
         stage('Git Push terraform.tfstate to Repo') {
           steps {
