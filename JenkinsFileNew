@@ -11,7 +11,9 @@ pipeline {
             //git remote set-url origin git@github.com:venki-tech/aws-terraform.git
             //git checkout
             sh '''
-            git clone https://github.com/venki-tech/aep-terraform-create-aws.git
+            mkdir -p "${WORKSPACE}/buildcode"
+            cd "${WORKSPACE}/buildcode"
+            git clone https://github.com/venki-tech/aws-terraform.git
             '''
           }
         }
