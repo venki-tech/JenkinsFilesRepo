@@ -116,25 +116,18 @@ pipeline {
                 git push origin HEAD:master
                 mkdir -p ${WORKSPACE}/temp_repo_ws
                 cp terraform.tfstate* inventory.txt ${WORKSPACE}/temp_repo_ws
-                rm -rf ${WORKSPACE}/aep-terraform-create-aws/*
+                rm -rf ${WORKSPACE}/aep-terraform-create-aws
 
                 echo "-------------------------------------"
-                git remote set-url origin git@github.com:venki-tech/aws-terraform.git
+                cd ${WORKSPACE}
+                git clone git@github.com:venki-tech/aws-terraform.git
+                cd ${WORKSPACE}/aws-terraform
                 git pull
                 cp ${WORKSPACE}/temp_repo_ws/* .
                 git add terraform.tfstate* inventory.txt
                 git commit -m "Added terraform state files to repo" || true
                 git push origin HEAD:master
-                rm -rf ${WORKSPACE}/aws-terraform
                 echo "-------------------------------------"
-
-                git remote set-url origin git@github.com:venki-tech/aep-ansible-provision.git
-                git pull
-                cp ${WORKSPACE}/temp_repo_ws/* .
-                git add terraform.tfstate* inventory.txt
-                git commit -m "Added terraform state files to repo" || true
-                git push origin HEAD:master
-                echo "--------------------------------------"
 
               '''
             }
