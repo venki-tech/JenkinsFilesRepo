@@ -35,7 +35,7 @@ pipeline {
                   if [[ ! -f ${HOME}/vvkey ]]; then
                     echo "New keys will be generated, and then copied over"
                     ssh-keygen -t rsa -N "" -f ${HOME}/vvkey
-                    
+
                     else
                     echo "Keys already present, will copy them into workspace"
                     fi
@@ -114,16 +114,25 @@ pipeline {
                 git add terraform.tfstate* inventory.txt
                 git commit -m "Added terraform state files to repo" || true
                 git push origin HEAD:master
+                mkdir -p ${WORKSPACE}/temp_repo_ws
+                cp terraform.tfstate* inventory.txt ${WORKSPACE}/temp_repo_ws
 
+                echo "---------------------------------------------------------------------------"
                 git remote set-url origin git@github.com:venki-tech/aws-terraform.git
+                git pull
+                cp ${WORKSPACE}/temp_repo_ws/* .
                 git add terraform.tfstate* inventory.txt
                 git commit -m "Added terraform state files to repo" || true
                 git push origin HEAD:master
+                echo "---------------------------------------------------------------------------"
 
                 git remote set-url origin git@github.com:venki-tech/aep-ansible-provision.git
+                git pull
+                cp ${WORKSPACE}/temp_repo_ws/* .
                 git add terraform.tfstate* inventory.txt
                 git commit -m "Added terraform state files to repo" || true
                 git push origin HEAD:master
+                echo "---------------------------------------------------------------------------"
 
               '''
             }
