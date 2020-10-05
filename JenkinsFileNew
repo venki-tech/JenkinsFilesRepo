@@ -11,6 +11,12 @@ pipeline {
             ansiColor('xterm') {
               sh '''
                 git clone https://github.com/venki-tech/aep-terraform-create-aws.git
+                . ./supply_hosts.txt
+                export LC_CTYPE=en_US.UTF-8
+                export LC_ALL=en_US.UTF-8
+                perl -i -pe "s/web_host/${web_host}/g" inventory.tmpl
+                perl -i -pe "s/db_host/${db_host}/g" inventory.tmpl
+                perl -i -pe "s/app_host/${app_host}/g" inventory.tmpl
               '''
             }
           }
@@ -110,6 +116,7 @@ pipeline {
             ansiColor('xterm') {
               sh '''
                 echo "-------------------------------------"
+                rm -rf ${WORKSPACE}/temp_repo_ws
                 cd ${WORKSPACE}/aep-terraform-create-aws/
                 git remote set-url origin git@github.com:venki-tech/aep-terraform-create-aws.git
                 git add terraform.tfstate* inventory.txt
