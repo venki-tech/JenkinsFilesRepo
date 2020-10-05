@@ -128,6 +128,7 @@ pipeline {
                 git add terraform.tfstate* inventory.txt
                 git commit -m "Added terraform state files to repo" || true
                 git push origin HEAD:master
+                rm -rf ${WORKSPACE}/aws-terraform
 
                 echo "-------------------------------------"
                 cd ${WORKSPACE}
@@ -138,7 +139,7 @@ pipeline {
                 git add terraform.tfstate* inventory.txt
                 git commit -m "Added terraform state files to repo" || true
                 git push origin HEAD:master
-
+                rm -rf ${WORKSPACE}/aep-ansible-provision
               '''
             }
           }
