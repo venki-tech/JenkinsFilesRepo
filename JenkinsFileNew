@@ -19,7 +19,7 @@ pipeline {
                 perl -i -pe "s/web_host/${web_host}/g" inventory.tmpl
                 perl -i -pe "s/db_host/${db_host}/g" inventory.tmpl
                 perl -i -pe "s/app_host/${app_host}/g" inventory.tmpl
-                if [[ -f terraform.tfstate ]];
+                if [[ -f terraform.tfstate ]];then
                   echo "terraform.tfstate exists. will check if the hosts are already provisioned."
                   present=$(egrep "${db_host}|${web_host}|${app_host}" terraform.tfstate|wc -c)
                   if [[ ${present} -gt 1 ]];then
