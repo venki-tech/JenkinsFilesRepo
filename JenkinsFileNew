@@ -19,6 +19,21 @@ pipeline {
                 perl -i -pe "s/web_host/${web_host}/g" inventory.tmpl
                 perl -i -pe "s/db_host/${db_host}/g" inventory.tmpl
                 perl -i -pe "s/app_host/${app_host}/g" inventory.tmpl
+                if [[ -f terraform.tfstate ]];
+                  echo "terraform.tfstate exists. will check if the hosts are already provisioned."
+                  present=$(egrep "${db_host}|${web_host}|${app_host}" terraform.tfstate|wc -c)
+                  if [[ ${present} -gt 1 ]];then
+                    echo "Hosts already provisioned, will allow the pipeline to run as is. Terraform knows what to do"
+                  else
+                    echo "The hosts are not provisioned, so will have to rename and move the terraform.tfstate file else server wont be build."
+                    ts=$(date +"%Y%m%d%H%M%S")
+                    mkdir -p ${WORKSPACE}/aep-terraform-create-aws/decom
+                    mv terraform.tfstate ${WORKSPACE}/aep-terraform-create-aws/decom/terraform.tfstate_${ts}
+                    git add .
+                    git commit -m "Added terraform state files to repo" || true
+                    git push origin HEAD:master
+                    echo "Proceed to build servers with new host names"
+                  fi
               '''
             }
           }
