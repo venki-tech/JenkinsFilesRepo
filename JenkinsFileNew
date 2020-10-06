@@ -29,9 +29,9 @@ pipeline {
                     ts=$(date +"%Y%m%d%H%M%S")
                     mkdir -p ${WORKSPACE}/aep-terraform-create-aws/decom
                     mv terraform.tfstate ${WORKSPACE}/aep-terraform-create-aws/decom/terraform.tfstate_${ts}
-                    git add .
+                    git add -A
                     git commit -m "Added terraform state files to repo" || true
-                    git push origin HEAD:master
+                    git push
                     echo "Proceed to build servers with new host names"
                   fi
                 else
