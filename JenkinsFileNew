@@ -108,7 +108,7 @@ pipeline {
                 ansiColor('xterm') {
                   sh '''
                     cd ${WORKSPACE}/aep-terraform-create-aws/
-                    terraform import aws_key_pair.vvkey
+                    terraform import aws_key_pair.example vvkey
                     terraform plan
                   '''
                 }
