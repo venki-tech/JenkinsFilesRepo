@@ -34,6 +34,9 @@ pipeline {
                     git push origin HEAD:master
                     echo "Proceed to build servers with new host names"
                   fi
+                else
+                  echo "This is a new build, no previous state files"
+                fi
               '''
             }
           }
