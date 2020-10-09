@@ -127,7 +127,7 @@ pipeline {
             }
           }
         }
-/*
+
         stage('Terraform Apply - Build Servers') {
           steps {
             withCredentials([[
@@ -183,7 +183,7 @@ pipeline {
             }
           }
         }
-*/
+
 
 /*
         stage('Ansible - Provision App Server') {
