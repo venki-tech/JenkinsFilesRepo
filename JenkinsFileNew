@@ -19,12 +19,15 @@ pipeline {
                 pref=$(echo ${web_host}|cut -c 1-6)
                 keyname=$(echo $pref""$suff)
 
+                echo "keyname=$keyname" >> ${WORKSPACE}/aep-terraform-create-aws/supply_hosts.txt
+
                 export LC_CTYPE=en_US.UTF-8
                 export LC_ALL=en_US.UTF-8
                 perl -i -pe "s/web_host/${web_host}/g" inventory.tmpl variables.tf
                 perl -i -pe "s/db_host/${db_host}/g" inventory.tmpl variables.tf
                 perl -i -pe "s/app_host/${app_host}/g" inventory.tmpl variables.tf
                 perl -i -pe "s/_replacekey_/${keyname}/g" inventory.tmpl variables.tf
+
 
                 if [[ -f terraform.tfstate ]];then
                   echo "terraform.tfstate exists. will check if the hosts are already provisioned."
@@ -72,6 +75,7 @@ pipeline {
                   fi
                   cp ${HOME}/vvkey* ${WORKSPACE}/aep-terraform-create-aws/
                   cd ${WORKSPACE}/aep-terraform-create-aws/
+                  . ./supply_hosts.txt
                   mv vvkey ${keyname}
                   mv vvkey.pub ${keyname}.pub
                 '''
