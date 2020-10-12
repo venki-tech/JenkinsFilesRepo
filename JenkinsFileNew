@@ -147,6 +147,7 @@ pipeline {
           steps {
             ansiColor('xterm') {
               sh '''
+              chmod -R 755 ${WORKSPACE}/aep-terraform-create-aws/
               cd ${WORKSPACE}/aep-terraform-create-aws/
               ./createInventory.sh
               '''
