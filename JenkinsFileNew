@@ -149,9 +149,9 @@ pipeline {
           steps {
             ansiColor('xterm') {
               sh '''
-              chmod -R 755 ${WORKSPACE}/aep-terraform-create-aws/
-              cd ${WORKSPACE}/aep-terraform-create-aws/
-              ./createInventory.sh
+                  chmod -R 755 ${WORKSPACE}/aep-terraform-create-aws/
+                  cd ${WORKSPACE}/aep-terraform-create-aws/
+                  ./createInventory.sh
               '''
 
             }
@@ -159,11 +159,16 @@ pipeline {
         }
 
 
-/*
+
         stage('Ansible - Provision App Server') {
           steps {
             ansiColor('xterm') {
-              sh 'ansible-playbook aws_ansible_pb_provision_appserver.yaml -i inventory.txt'
+              sh '''
+                cd ${WORKSPACE}
+                git clone git@github.com:venki-tech/aep-ansible-provision.git
+                cd ${WORKSPACE}/aep-ansible-provision
+                ansible-playbook aws_ansible_pb_provision_appserver.yaml -i runninginventory.txt
+              '''
             }
           }
         }
@@ -171,7 +176,9 @@ pipeline {
         stage('Ansible - Provision DB Server') {
           steps {
             ansiColor('xterm') {
-              sh 'ansible-playbook aws_ansible_pb_provision_dbserver.yaml -i inventory.txt'
+              sh '''
+                ansible-playbook aws_ansible_pb_provision_dbserver.yaml -i runninginventory.txt
+              '''
             }
           }
         }
@@ -179,11 +186,12 @@ pipeline {
         stage('Ansible - Provision WEB Server') {
           steps {
             ansiColor('xterm') {
-              sh 'ansible-playbook aws_ansible_pb_provision_webserver.yaml -i inventory.txt'
+              sh '''
+                ansible-playbook aws_ansible_pb_provision_webserver.yaml -i runninginventory.txt
+              '''
             }
           }
         }
-*/
 
     }
 
