@@ -177,6 +177,7 @@ pipeline {
           steps {
             ansiColor('xterm') {
               sh '''
+                cd ${WORKSPACE}/aep-ansible-provision
                 ansible-playbook aws_ansible_pb_provision_dbserver.yaml -i runninginventory.txt
               '''
             }
@@ -187,6 +188,7 @@ pipeline {
           steps {
             ansiColor('xterm') {
               sh '''
+                cd ${WORKSPACE}/aep-ansible-provision
                 ansible-playbook aws_ansible_pb_provision_webserver.yaml -i runninginventory.txt
               '''
             }
