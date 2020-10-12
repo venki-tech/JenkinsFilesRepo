@@ -80,6 +80,8 @@ pipeline {
                   . ./supply_hosts.txt
                   mv vvkey ${keyname}
                   mv vvkey.pub ${keyname}.pub
+                  mkdir -p ${HOME}/keys
+                  cp ${keyname}* ${HOME}/keys/
                 '''
               }
           }
@@ -167,6 +169,7 @@ pipeline {
                 cd ${WORKSPACE}
                 git clone git@github.com:venki-tech/aep-ansible-provision.git
                 cd ${WORKSPACE}/aep-ansible-provision
+                cp ${HOME}/keys/* .
                 ansible-playbook aws_ansible_pb_provision_appserver.yaml -i runninginventory.txt
               '''
             }
