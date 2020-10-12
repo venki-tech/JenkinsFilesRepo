@@ -20,6 +20,7 @@ pipeline {
                 keyname=$(echo $pref""$suff)
 
                 echo "keyname=$keyname" >> ${WORKSPACE}/aep-terraform-create-aws/supply_hosts.txt
+                echo "hosts_exists=no" >> ${WORKSPACE}/aep-terraform-create-aws/supply_hosts.txt
 
                 export LC_CTYPE=en_US.UTF-8
                 export LC_ALL=en_US.UTF-8
@@ -34,6 +35,7 @@ pipeline {
                   present=$(egrep "${db_host}|${web_host}|${app_host}" terraform.tfstate|wc -c)
                   if [[ ${present} -gt 1 ]];then
                     echo "Hosts already provisioned, will allow the pipeline to run as is. Terraform knows what to do"
+                    perl -i -pe 's/hosts_exists=no/hosts_exists=yes/g' ${WORKSPACE}/aep-terraform-create-aws/supply_hosts.txt
                   else
                     echo "The hosts are not provisioned, so will have to rename and move the terraform.tfstate file else server wont be build."
                     ts=$(date +"%Y%m%d%H%M%S")
