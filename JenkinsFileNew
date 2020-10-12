@@ -155,7 +155,6 @@ pipeline {
                   cd ${WORKSPACE}/aep-terraform-create-aws/
                   ./createInventory.sh
               '''
-
             }
           }
         }
@@ -193,6 +192,28 @@ pipeline {
               sh '''
                 cd ${WORKSPACE}/aep-ansible-provision
                 ansible-playbook aws_ansible_pb_provision_webserver.yaml -i runninginventory.txt
+              '''
+            }
+          }
+        }
+
+        stage('Ansible - Deploy DB Server') {
+          steps {
+            ansiColor('xterm') {
+              sh '''
+                cd ${WORKSPACE}/aep-ansible-provision
+                ansible-playbook aws_ansible_pb_deploy_dbserver.yaml -i runninginventory.txt
+              '''
+            }
+          }
+        }
+
+        stage('Ansible - Deploy APP Server') {
+          steps {
+            ansiColor('xterm') {
+              sh '''
+                cd ${WORKSPACE}/aep-ansible-provision
+                ansible-playbook aws_ansible_pb_deploy_appserver.yaml -i runninginventory.txt
               '''
             }
           }
