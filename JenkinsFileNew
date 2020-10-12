@@ -146,8 +146,10 @@ pipeline {
         stage('Git Push terraform.tfstate to Repo') {
           steps {
             ansiColor('xterm') {
+              sh '''
               cd ${WORKSPACE}/aep-terraform-create-aws/
-              sh(returnStdout: true, script: "createInventory.sh")
+              ./createInventory.sh
+              '''
 
             }
           }
