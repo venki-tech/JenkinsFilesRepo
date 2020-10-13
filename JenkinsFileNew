@@ -168,6 +168,7 @@ pipeline {
                 git clone git@github.com:venki-tech/aep-ansible-provision.git
                 cd ${WORKSPACE}/aep-ansible-provision
                 cp ${HOME}/keys/* .
+                cp -f ${WORKSPACE}/temp_repo_ws/hosts.template .
                 ansible-playbook aws_ansible_pb_provision_appserver.yaml -i runninginventory.txt
               '''
             }
