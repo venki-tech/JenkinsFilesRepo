@@ -212,7 +212,6 @@ pipeline {
             ansiColor('xterm') {
               sh '''
                 cd ${WORKSPACE}/aep-ansible-provision
-                
                 ansible-playbook aws_ansible_pb_deploy_appserver.yaml -i runninginventory.txt
               '''
             }
