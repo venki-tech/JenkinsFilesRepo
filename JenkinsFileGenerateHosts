@@ -37,7 +37,7 @@ pipeline {
 
                 git add supply_hosts.txt
                 git commit -m "Added supply_hosts.txt files to aep-terraform-create-aws repo" || true
-                git push origin HEAD:master
+                git push origin
               '''
             }
           }
