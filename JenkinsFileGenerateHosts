@@ -12,6 +12,7 @@ pipeline {
                 git clone https://github.com/venki-tech/aep-generate-hosts.git
                 chmod 755 ${WORKSPACE}/aep-generate-hosts/
 
+                cd ${WORKSPACE}/aep-generate-hosts/
                 . ./aws_naming_convention.txt
                 web_host=$(echo "${type}${env}${webos}${typeweb}${currentnumber}")
                 db_host=$(echo "${type}${env}${dbos}${typedb}${currentnumber}")
