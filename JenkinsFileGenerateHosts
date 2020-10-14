@@ -22,7 +22,8 @@ pipeline {
               sh '''
                 git clone git@github.com:venki-tech/aep-generate-hosts.git
                 chmod -R 755 ${WORKSPACE}/aep-generate-hosts/
-
+                git pull
+                
                 cd ${WORKSPACE}/aep-generate-hosts/
                 . ./aws_naming_convention.txt
                 web_host=$(echo "${type}${env}${webos}${typeweb}${numberinuse}")
