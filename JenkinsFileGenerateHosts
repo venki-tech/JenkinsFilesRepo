@@ -33,6 +33,9 @@ pipeline {
 
                   numberinuse=$(printf %02d "$((10#$numberinuse + 1))")
                   echo "numberinuse after update = ${numberinuse}"
+                  echo "the aws_naming_convention file is updated as well."
+                  perl -i -pe "s/numberinuse=.*/numberinuse=${numberinuse}/g" aws_naming_convention.txt
+
                 fi
 
                 web_host=$(echo "${type}${env}${webos}${typeweb}${numberinuse}")
