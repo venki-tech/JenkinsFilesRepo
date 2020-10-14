@@ -41,7 +41,7 @@ pipeline {
                 mkdir -p ${WORKSPACE}/temp_repo_ws
                 cp supply_hosts.txt ${WORKSPACE}/temp_repo_ws/
 
-                rm -rf ${WORKSPACE}/aep-terraform-create-aws
+                rm -rf ${WORKSPACE}/aep-generate-hosts
                 git clone git@github.com:venki-tech/aep-terraform-create-aws.git
                 cd ${WORKSPACE}/aep-terraform-create-aws/
                 cp ${WORKSPACE}/temp_repo_ws/supply_hosts.txt .
