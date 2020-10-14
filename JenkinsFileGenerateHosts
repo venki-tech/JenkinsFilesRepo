@@ -26,6 +26,15 @@ pipeline {
 
                 cd ${WORKSPACE}/aep-generate-hosts/
                 . ./aws_naming_convention.txt
+
+                if [[ -f supply_hosts.txt ]];then
+                  echo "supply_hosts.txt file exits, will have to increment the host number for dynamic generation"
+                  echo "numberinuse before update = ${numberinuse}"
+
+                  numberinuse=$(printf %02d "$((10#$numberinuse + 1))")
+                  echo "numberinuse after update = ${numberinuse}"
+                fi
+
                 web_host=$(echo "${type}${env}${webos}${typeweb}${numberinuse}")
                 db_host=$(echo "${type}${env}${dbos}${typedb}${numberinuse}")
                 app_host=$(echo "${type}${env}${appos}${typeapp}${numberinuse}")
