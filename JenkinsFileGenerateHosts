@@ -4,19 +4,31 @@ pipeline {
 
     stages {
 
+
+        stage ('Set Variables') {
+            steps {
+                script {
+                  ansiColor('xterm') {
+                    env.credentialsId = "awsCredentials"
+                    env.githubCredentialsId = "github_clone"
+                  }
+                }
+            }
+        }
+
         stage('Update supply_hosts') {
           steps {
             cleanWs()
             ansiColor('xterm') {
               sh '''
                 git clone https://github.com/venki-tech/aep-generate-hosts.git
-                chmod 755 ${WORKSPACE}/aep-generate-hosts/
+                chmod -R 755 ${WORKSPACE}/aep-generate-hosts/
 
                 cd ${WORKSPACE}/aep-generate-hosts/
                 . ./aws_naming_convention.txt
-                web_host=$(echo "${type}${env}${webos}${typeweb}${currentnumber}")
-                db_host=$(echo "${type}${env}${dbos}${typedb}${currentnumber}")
-                app_host=$(echo "${type}${env}${appos}${typeapp}${currentnumber}")
+                web_host=$(echo "${type}${env}${webos}${typeweb}${numberinuse}")
+                db_host=$(echo "${type}${env}${dbos}${typedb}${numberinuse}")
+                app_host=$(echo "${type}${env}${appos}${typeapp}${numberinuse}")
 
                 echo ${app_host} > supply_hosts.txt
                 echo ${web_host} >> supply_hosts.txt
@@ -37,21 +49,10 @@ pipeline {
 
                 git add supply_hosts.txt
                 git commit -m "Added supply_hosts.txt files to aep-terraform-create-aws repo" || true
-                git push
+                git push origin HEAD:master
               '''
             }
           }
-        }
-
-        stage ('Set Variables') {
-            steps {
-                script {
-                  ansiColor('xterm') {
-                    env.credentialsId = "awsCredentials"
-                    env.githubCredentialsId = "github_clone"
-                  }
-                }
-            }
         }
 
     }
