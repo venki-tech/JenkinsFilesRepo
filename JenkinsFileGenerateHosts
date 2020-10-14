@@ -47,6 +47,7 @@ pipeline {
                 echo "------------------------------------------"
 
                 rm -rf ${WORKSPACE}/aep-generate-hosts
+                cd ${WORKSPACE}/
                 git clone git@github.com:venki-tech/aep-terraform-create-aws.git
 
                 echo "Copying the supply_hosts.txt file to be uploaded to aep-terraform-create-aws repo"
