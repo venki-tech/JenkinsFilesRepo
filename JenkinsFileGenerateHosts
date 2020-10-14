@@ -1,0 +1,71 @@
+pipeline {
+
+    agent { label 'slave'}
+
+    stages {
+
+        stage('Update supply_hosts') {
+          steps {
+            cleanWs()
+            ansiColor('xterm') {
+              sh '''
+                git clone https://github.com/venki-tech/aep-generate-hosts.git
+                chmod 755 ${WORKSPACE}/aep-terraform-create-aws/
+                . ./aws_naming_convention.txt
+                web_host=$(echo "${type}${env}${webos}${typeweb}${currentnumber}")
+                db_host=$(echo "${type}${env}${dbos}${typedb}${currentnumber}")
+                app_host=$(echo "${type}${env}${appos}${typeapp}${currentnumber}")
+
+                echo ${app_host} > supply_hosts.txt
+                echo ${web_host} >> supply_hosts.txt
+                echo ${db_host}  >> supply_hosts.txt
+
+                git add supply_hosts.txt
+                git commit -m "Added supply_hosts.txt files to aep-generate-hosts repo" || true
+                git push origin HEAD:master
+
+                rm -rf ${WORKSPACE}/temp_repo_ws
+                mkdir -p ${WORKSPACE}/temp_repo_ws
+                cp supply_hosts.txt ${WORKSPACE}/temp_repo_ws/
+
+                rm -rf ${WORKSPACE}/aep-terraform-create-aws
+                git clone git@github.com:venki-tech/aep-terraform-create-aws.git
+                cd ${WORKSPACE}/aep-terraform-create-aws/
+                cp ${WORKSPACE}/temp_repo_ws/supply_hosts.txt .
+
+                git add supply_hosts.txt
+                git commit -m "Added supply_hosts.txt files to aep-terraform-create-aws repo" || true
+                git push origin HEAD:master
+
+            }
+          }
+        }
+
+        stage ('Set Variables') {
+            steps {
+                script {
+                  ansiColor('xterm') {
+                    env.credentialsId = "awsCredentials"
+                    env.githubCredentialsId = "github_clone"
+                  }
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "Success"
+        }
+        unstable {
+            echo "Unstable"
+        }
+        aborted {
+            echo "Aborted"
+        }
+        failure {
+            echo "FAILURE"
+        }
+    }
+}
