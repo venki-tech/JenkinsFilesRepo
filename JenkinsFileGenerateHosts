@@ -46,7 +46,6 @@ pipeline {
 
                 rm -rf ${WORKSPACE}/aep-generate-hosts
                 git clone git@github.com:venki-tech/aep-terraform-create-aws.git
-                git remote set-url origin git@github.com:venki-tech/aep-terraform-create-aws.git
 
                 cd ${WORKSPACE}/aep-terraform-create-aws/
                 cp ${WORKSPACE}/temp_repo_ws/supply_hosts.txt .
