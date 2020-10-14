@@ -21,10 +21,8 @@ pipeline {
             ansiColor('xterm') {
               sh '''
                 git clone git@github.com:venki-tech/aep-generate-hosts.git
-                git remote set-url origin git@github.com:venki-tech/aep-generate-hosts.git
 
                 chmod -R 755 ${WORKSPACE}/aep-generate-hosts/
-                git pull
 
                 cd ${WORKSPACE}/aep-generate-hosts/
                 . ./aws_naming_convention.txt
@@ -37,7 +35,6 @@ pipeline {
                 echo "web_host=${web_host}" >> supply_hosts.txt
                 echo "db_host=${db_host}"  >> supply_hosts.txt
 
-
                 git add supply_hosts.txt
                 git commit -m "Added supply_hosts.txt files to aep-generate-hosts repo" || true
                 git push origin HEAD:master
@@ -46,15 +43,7 @@ pipeline {
                 mkdir -p ${WORKSPACE}/temp_repo_ws
                 cp supply_hosts.txt ${WORKSPACE}/temp_repo_ws/
 
-                rm -rf ${WORKSPACE}/aep-generate-hosts
-                git clone git@github.com:venki-tech/aep-terraform-create-aws.git
 
-                cd ${WORKSPACE}/aep-terraform-create-aws/
-                cp ${WORKSPACE}/temp_repo_ws/supply_hosts.txt .
-
-                git add supply_hosts.txt
-                git commit -m "Added supply_hosts.txt files to aep-terraform-create-aws repo" || true
-                git push origin HEAD:master
               '''
             }
           }
