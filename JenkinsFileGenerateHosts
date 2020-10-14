@@ -49,7 +49,7 @@ pipeline {
 
                 git remote set-url origin git@github.com:venki-tech/aep-generate-hosts.git
 
-                git add supply_hosts.txt
+                git add supply_hosts.txt aws_naming_convention.txt
                 git commit -m "Added supply_hosts.txt files to aep-generate-hosts repo" || true
                 git push -f origin HEAD:master
 
