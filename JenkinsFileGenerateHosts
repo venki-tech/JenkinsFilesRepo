@@ -39,12 +39,11 @@ pipeline {
 
                 git add supply_hosts.txt
                 git commit -m "Added supply_hosts.txt files to aep-generate-hosts repo" || true
-                git push origin HEAD:master
+                git push -f origin HEAD:master
 
                 rm -rf ${WORKSPACE}/temp_repo_ws
                 mkdir -p ${WORKSPACE}/temp_repo_ws
                 cp supply_hosts.txt ${WORKSPACE}/temp_repo_ws/
-
 
               '''
             }
