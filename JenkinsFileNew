@@ -201,8 +201,14 @@ pipeline {
           steps {
             ansiColor('xterm') {
               sh '''
+
+                cd ${WORKSPACE}/temp_repo_ws/
+                . ./supply_hosts.txt
+                inv_file_deploy="${keyname}_deploy_inventory.txt"
+                cp ${inv_file_deploy} ${WORKSPACE}/aep-ansible-provision/
+
                 cd ${WORKSPACE}/aep-ansible-provision
-                ansible-playbook aws_ansible_pb_deploy_dbserver.yaml -i runninginventory.txt
+                ansible-playbook aws_ansible_pb_deploy_dbserver.yaml -i ${inv_file_deploy}
               '''
             }
           }
@@ -212,8 +218,13 @@ pipeline {
           steps {
             ansiColor('xterm') {
               sh '''
+
+                cd ${WORKSPACE}/temp_repo_ws/
+                . ./supply_hosts.txt
+                inv_file_deploy="${keyname}_deploy_inventory.txt"
+
                 cd ${WORKSPACE}/aep-ansible-provision
-                ansible-playbook aws_ansible_pb_deploy_appserver.yaml -i runninginventory.txt
+                ansible-playbook aws_ansible_pb_deploy_appserver.yaml -i ${inv_file_deploy}
               '''
             }
           }
